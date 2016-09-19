@@ -1,0 +1,50 @@
+regex = reterm '|' regex.
+regex = reterm.
+
+reterm = refactor reterm
+reterm = refactor
+
+refactor = reatom['*']
+
+reatom = letter | '.' | '(' regex ')'
+
+a* => (repeat (char a))
+a.b* => (concat (concat (char a) dot) (repeat (char b)))
+
+(ab)* => (repeat (concat (char a) (char b)))
+
+ab*|cc* => (alternative (concat (char a) (repeat (char b))) (concat (char c) (repeat (char c))))
+
+typedef enum {
+    re_char=1,
+    re_concat,
+    re_repeat,
+    re_alter,
+    re_dot
+} re_kind;
+
+struct node__ {
+    re_kind kind;
+    char ch;
+    struct node__ *fc; /* fc short for First Child */
+    struct node__ *sc; /* sc short for Second Child */
+};
+
+/* the only dot node */
+the_dot_node = (struct node__ *) calloc(1, sizeof(struct node__));
+the_dot_node->kind = re_dot;
+
+/* parse: core procedures */
+
+parse_re_atom
+parse_re_factor
+parse_re_term
+parse_re_exp
+
+make_char_node
+make_concat_node
+make_repeat_node
+make_alter_node
+
+/* parse: debug procedure */
+print_re_node
