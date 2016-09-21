@@ -32,7 +32,7 @@ static re_node *parse_re_term(const char **ss) {
 
     re_node *p, *pp;
     p = parse_re_factor(ss);
-    while (**ss != '|' && **ss != '\0' && **ss != '(' && **ss != ')') {
+    while (**ss != '|' && **ss != '\0' /* && **ss != '(' */ && **ss != ')') {
         /* ss++; */
         pp = parse_re_factor(ss);
         p = make_concat_node(p, pp);
@@ -71,7 +71,7 @@ static re_node *parse_re_atom(const char **ss) {
         if (**ss == ')')
             *ss = *ss + 1;
         else {
-            fprintf(stderr, "error: ) expected, got, %c\n", **ss);
+            fprintf(stderr, "error: closing ) expected in \x1b[31m%c\x1b[0m%s\n", *(*ss-step-1), (*ss - step));
             exit(1);
         }
     } else {
