@@ -19,6 +19,8 @@ ab*|cc* => (alternative (concat (char a) (repeat (char b))) (concat (char c) (re
 #ifndef DIY_RE_H
 #define DIY_RE_H
 
+typedef int BOOL;
+
 typedef enum {
     re_char=1,
     re_concat,
@@ -37,6 +39,8 @@ struct node__ {
 typedef struct node__ re_node;
 
 extern re_node the_dot_node;
-extern re_node *parse_re_exp(const char s[], int *step);
+extern re_node *parse_re_exp(const char s[], int *step, int sub);
 extern void print_re_node(re_node *root, int level);
+extern BOOL match_re_node(re_node *node, const char s[], int *step);
+
 #endif

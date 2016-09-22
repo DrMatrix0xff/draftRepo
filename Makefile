@@ -1,7 +1,7 @@
 
 SRC = $(wildcard *.c)
 OBJS = $(SRC:%.c=%.o)
-BIN = tParse
+BIN = TParse
 
 %.o: %.c
 	gcc -g -Wall -c $< -o $@

@@ -14,7 +14,7 @@ re_node *make_concat_node(re_node *sub1, re_node *sub2);
 re_node *make_char_node(char c);
 re_node *make_repeat_node(re_node *sub1);
 
-re_node *parse_re_exp(const char s[], int *step) {
+re_node *parse_re_exp(const char s[], int *step, int sub) {
     re_node *p, *pp;
     const char *ss = s;
     p = parse_re_term(&ss);
@@ -23,7 +23,20 @@ re_node *parse_re_exp(const char s[], int *step) {
         pp = parse_re_term(&ss);
         p = make_alter_node(p, pp);
     }
-    assert(*ss == '\0' || *ss == ')');
+    /* \51, the ascii repr of closing paren */
+    assert(*ss == '\0' || *ss == '\51');
+    if (*ss == '\51' && sub == 0) {
+        char *parts;
+        int i, len;
+        len = ss - s + 1;
+        parts = (char *) calloc(len, sizeof(char));
+        for (i = 0; i < len-1; i++)
+            parts[i] = s[i]; 
+        parts[i] = '\0';
+        fprintf(stderr, "parse error: unbalanced parentheses %s\x1b[31m\51\x1b[0m\n", parts);
+        free(parts);
+        exit(1);
+    }
     *step = ss - s;
     return p;
 }
@@ -32,7 +45,7 @@ static re_node *parse_re_term(const char **ss) {
 
     re_node *p, *pp;
     p = parse_re_factor(ss);
-    while (**ss != '|' && **ss != '\0' /* && **ss != '(' */ && **ss != ')') {
+    while (**ss != '|' && **ss != '\0' /* && **ss != '(' */ && **ss != '\51') {
         /* ss++; */
         pp = parse_re_factor(ss);
         p = make_concat_node(p, pp);
@@ -57,6 +70,7 @@ static re_node *parse_re_atom(const char **ss) {
     re_node *p;
     char c;
     int step;
+    int sub;
     c = **ss;
     if (isalpha(c)) {
         *ss = *ss + 1;
@@ -64,14 +78,15 @@ static re_node *parse_re_atom(const char **ss) {
     } else if (c == '.') {
         *ss = *ss + 1;
         p = &the_dot_node;
-    } else if (c == '(') {
+    } else if (c == '\50') {
         *ss = *ss + 1;
-        p = parse_re_exp(*ss, &step);
+        sub = 1;
+        p = parse_re_exp(*ss, &step, sub);
         *ss = *ss + step;
-        if (**ss == ')')
+        if (**ss == '\51')
             *ss = *ss + 1;
         else {
-            fprintf(stderr, "error: closing ) expected in \x1b[31m%c\x1b[0m%s\n", *(*ss-step-1), (*ss - step));
+            fprintf(stderr, "error: closing \51 expected in \x1b[31m%c\x1b[0m%s\n", *(*ss-step-1), (*ss - step));
             exit(1);
         }
     } else {

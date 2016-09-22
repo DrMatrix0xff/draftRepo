@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     // const char *patt = "C(a|d)n.d.";
     re_node *rt;
     int ii;
-    rt = parse_re_exp(patt, &ii);
+    rt = parse_re_exp(patt, &ii, 0);
     print_re_node(rt, 1);
     return 0;
 }
