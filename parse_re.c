@@ -9,11 +9,6 @@ static re_node *parse_re_term(const char **ss);
 static re_node *parse_re_factor(const char **ss);
 static re_node *parse_re_atom(const char **ss);
 
-re_node *make_alter_node(re_node *sub1, re_node *sub2);
-re_node *make_concat_node(re_node *sub1, re_node *sub2);
-re_node *make_char_node(char c);
-re_node *make_repeat_node(re_node *sub1);
-
 re_node *parse_re_exp(const char s[], int *step, int sub) {
     re_node *p, *pp;
     const char *ss = s;

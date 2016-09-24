@@ -3,7 +3,7 @@
 
 #include "diyre.h"
 
-re_node the_dot_node = {.kind=re_dot, .ch='.', .fc=NULL, .sc=NULL};
+re_node the_end_node = {.kind=re_end, .ch='.', .fc=NULL, .sc=NULL};
 
 int main(int argc, char *argv[]) {
     const char *patt = "c(a|b.)*";

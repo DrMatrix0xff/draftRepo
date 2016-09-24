@@ -26,7 +26,8 @@ typedef enum {
     re_concat,
     re_repeat,
     re_alter,
-    re_dot
+    re_dot,
+    re_end /* end of regular expression */
 } re_kind;
 
 struct node__ {
@@ -38,9 +39,15 @@ struct node__ {
 
 typedef struct node__ re_node;
 
-extern re_node the_dot_node;
+extern re_node the_end_node;
 extern re_node *parse_re_exp(const char s[], int *step, int sub);
 extern void print_re_node(re_node *root, int level);
 extern BOOL match_re_node(re_node *node, const char s[], int *step);
+
+extern re_node *make_alter_node(re_node *sub1, re_node *sub2);
+extern re_node *make_concat_node(re_node *sub1, re_node *sub2);
+extern re_node *make_char_node(char c);
+extern re_node *make_repeat_node(re_node *sub1);
+extern re_node *make_dot_node(void);
 
 #endif
