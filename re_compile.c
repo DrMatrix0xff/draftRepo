@@ -15,11 +15,11 @@ struct program *compile(re_node *node) {
     p = (struct program *) malloc(sizeof *p);
     if (p != nil) {
         emit(node);
+        code[ci].op = Match;
+        ci++;
+        p->len = ci;
+        p->entry = code;
     }
-    code[ci].op = Match;
-    ci++;
-    p->len = ci;
-    p->entry = code;
     return p;
 }
 
