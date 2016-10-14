@@ -1,12 +1,12 @@
 /*
  * instructions: [Char x], [Split x, y], [Jmp x], [Match]
  *
- * (ab)*c =>
+ * (ab)*. =>
  * 0. Split 1, 4
  * 1. Char a
  * 2. Char b
  * 3. Jmp 0
- * 4. Char c
+ * 4. Char a
  * 5. Match
  *
  */
@@ -14,8 +14,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "diyre.h"
+/*
 enum {
     Char = 1,
+    Dot,
     Split,
     Jmp,
     Match
@@ -23,7 +26,7 @@ enum {
 
 struct instruct {
     int op;
-    int ch; /* for Char */
+    int ch; // for Char
     struct instruct *x;
     struct instruct *y;
 };
@@ -32,13 +35,14 @@ struct program {
     struct instruct *entry;
     int len;
 };
+*/
 
-struct {
+static struct {
     struct instruct *inst;
     int p;
 } stack[512];
 
-int sp = 0;
+static int sp = 0;
 
 /*
  * This is a backtrack style virtual machine,
@@ -59,7 +63,8 @@ int execute(struct program *prog, const char s[]) {
         for ( ; ; ) {
             switch (pc->op) {
                 case Char:
-                    if (pc->ch == s[p]) {
+                case Dot:
+                    if (pc->ch == s[p] || (pc->ch == '.' && s[p] != '\0')) {
                         pc += 1;
                         p += 1;
                         continue;
@@ -95,9 +100,9 @@ int execute(struct program *prog, const char s[]) {
     return 0;
 }
 
-
+/*
 int main(int argc, char *argv[]) {
-    const char *str = "abababc";
+    const char *str = "ababababcca";
     struct program *prog;
     prog = (struct program *) malloc(sizeof (struct program) + 6 * sizeof (struct instruct));
     if (prog != NULL) {
@@ -105,33 +110,33 @@ int main(int argc, char *argv[]) {
         prog->len = 6;
         prog->entry = (struct instruct *)(prog + 1);
         i = prog->entry;
-        /* 0 */
+        // 0
         i->op = Split;
         i->x = prog->entry + 1;
         i->y = prog->entry + 4;
         i += 1;
 
-        /* 1 */
+        // 1
         i->op = Char;
         i->ch = 'a';
         i += 1;
 
-        /* 2 */
+        // 2
         i->op = Char;
         i->ch = 'b';
         i += 1;
 
-        /* 3 */
+        // 3
         i->op = Jmp;
         i->x = prog->entry;
         i += 1;
 
-        /* 4 */
-        i->op = Char;
-        i->ch = 'c';
+        // 4
+        i->op = Dot;
+        i->ch = '.';
         i += 1;
 
-        /* 5 */
+        // 5
         i->op = Match;
         if (execute(prog, str) != 0) {
             printf("result of vm execution: matched\n");
@@ -142,5 +147,6 @@ int main(int argc, char *argv[]) {
     }
     return 0;
 }
+*/
 
 

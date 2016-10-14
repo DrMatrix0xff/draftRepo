@@ -13,6 +13,15 @@ re_node *make_char_node(char c) {
     return p;
 }
 
+re_node *make_dot_node() {
+    re_node *p;
+    p = (re_node *) calloc(1, sizeof(re_node));
+    if (p != NULL) {
+        p->kind = re_dot;
+    }
+    return p;
+}
+
 re_node *make_concat_node(re_node *sub1, re_node *sub2) {
     re_node *p;
     p = (re_node *) calloc(1, sizeof(re_node));
@@ -44,5 +53,4 @@ re_node *make_repeat_node(re_node *sub) {
     }
     return p;
 }
-
 

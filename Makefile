@@ -1,6 +1,11 @@
+SRC = t_parse.c\
+      make_nodes.c\
+      re_parse.c\
+      re_compile.c\
+      re_vm.c
 
-SRC = $(wildcard *.c)
 OBJS = $(SRC:%.c=%.o)
+
 BIN = TParse
 
 %.o: %.c
@@ -11,6 +16,10 @@ all: $(BIN)
 $(BIN): $(OBJS)
 	gcc -g -Wall $^ -o $@
 
+$(OBJS): diyre.h
+
 clean:
 	rm -f $(OBJS) $(BIN)
+
+.PHONY: clean
 

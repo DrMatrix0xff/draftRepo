@@ -19,15 +19,32 @@ ab*|cc* => (alternative (concat (char a) (repeat (char b))) (concat (char c) (re
 #ifndef DIY_RE_H
 #define DIY_RE_H
 
-typedef int BOOL;
+enum {
+    Char = 1,
+    Dot,
+    Split,
+    Jmp,
+    Match
+};
+
+struct instruct {
+    int op;
+    int ch; /* for Char */
+    struct instruct *x;
+    struct instruct *y;
+};
+
+struct program {
+    struct instruct *entry;
+    int len;
+};
 
 typedef enum {
     re_char=1,
     re_concat,
     re_repeat,
     re_alter,
-    re_dot,
-    re_end /* end of regular expression */
+    re_dot
 } re_kind;
 
 struct node__ {
@@ -39,10 +56,11 @@ struct node__ {
 
 typedef struct node__ re_node;
 
-extern re_node the_end_node;
 extern re_node *parse_re_exp(const char s[], int *step, int sub);
 extern void print_re_node(re_node *root, int level);
-extern BOOL match_re_node(re_node *node, const char s[], int *step);
+extern struct program *compile(re_node *node);
+extern void print_prog_code(struct program *p);
+extern int execute(struct program *p, const char s[]);
 
 extern re_node *make_alter_node(re_node *sub1, re_node *sub2);
 extern re_node *make_concat_node(re_node *sub1, re_node *sub2);
@@ -51,3 +69,5 @@ extern re_node *make_repeat_node(re_node *sub1);
 extern re_node *make_dot_node(void);
 
 #endif
+
+

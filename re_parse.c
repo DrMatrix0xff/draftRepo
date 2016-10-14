@@ -72,7 +72,7 @@ static re_node *parse_re_atom(const char **ss) {
         p = make_char_node(c);
     } else if (c == '.') {
         *ss = *ss + 1;
-        p = &the_dot_node;
+        p = make_dot_node();
     } else if (c == '\50') {
         *ss = *ss + 1;
         sub = 1;
@@ -85,7 +85,7 @@ static re_node *parse_re_atom(const char **ss) {
             exit(1);
         }
     } else {
-        fprintf(stderr, "error: unknown character, %c.\n", c);
+        fprintf(stderr, "parse error: at character \x1b[31m%c\x1b[0m.\n", c);
         exit(1);
     }
     return p;
@@ -128,7 +128,7 @@ void print_re_node(re_node *root, int level) {
             fprintf(stdout, "%s)\n", indent);
             break;
         default:
-            fprintf(stderr, "error, node of unknown kind\n");
+            fprintf(stderr, "error: node of unknown kind\n");
             exit(1);
     }
     free(indent);
