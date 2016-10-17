@@ -51,15 +51,15 @@ static int sp = 0;
  */
 
 int execute(struct program *prog, const char s[]) {
-    struct instruct *pc; /* program counter */
-    int p; /* sp: string pointer */
+    struct instruct *pc, *ppcc; /* program counter, ppcc and pp for not add duplicate record to the stack*/
+    int p, pp; /* p: string pointer */
     stack[sp].inst = prog->entry;
     stack[sp].p = 0;
     sp += 1;
     while (sp >= 1) {
         sp -= 1;
-        pc = stack[sp].inst;
-        p = stack[sp].p;
+        ppcc = pc = stack[sp].inst;
+        pp = p = stack[sp].p;
         for ( ; ; ) {
             switch (pc->op) {
                 case Char:
@@ -75,9 +75,11 @@ int execute(struct program *prog, const char s[]) {
                         fprintf(stderr, "stack overflow\n");
                         exit(1);
                     }
-                    stack[sp].inst = pc->y;
-                    stack[sp].p = p;
-                    sp += 1;
+                    if (p != pp || ppcc != pc->y) {
+                        stack[sp].inst = pc->y;
+                        stack[sp].p = p;
+                        sp += 1;
+                    }
                     pc = pc->x;
                     continue;
                 case Jmp:

@@ -1,4 +1,4 @@
-SRC = t_parse.c\
+SRC = main.c\
       make_nodes.c\
       re_parse.c\
       re_compile.c\
@@ -6,7 +6,7 @@ SRC = t_parse.c\
 
 OBJS = $(SRC:%.c=%.o)
 
-BIN = TParse
+BIN = Re
 
 %.o: %.c
 	gcc -g -Wall -c $< -o $@

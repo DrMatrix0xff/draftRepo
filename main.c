@@ -4,8 +4,8 @@
 #include "diyre.h"
 
 int main(int argc, char *argv[]) {
-    const char *patt = "(a*b)*c.";
-    const char *str = "abaabbbbcdxyz";
+    const char *patt = "(a*.)*c.";
+    const char *str = "aaacdxyz";
     // const char *patt = "ab*(c|C(a(b)))|d*e";
     re_node *rt;
     int ii;
