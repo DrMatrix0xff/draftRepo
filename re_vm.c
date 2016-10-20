@@ -1,7 +1,7 @@
 /*
  * instructions: [Char x], [Split x, y], [Jmp x], [Match]
  *
- * (ab)*. =>
+ * (ab)*a =>
  * 0. Split 1, 4
  * 1. Char a
  * 2. Char b

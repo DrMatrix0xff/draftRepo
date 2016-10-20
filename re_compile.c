@@ -97,6 +97,9 @@ void print_prog_code(struct program *p) {
             case Match:
                 printf("%d. Match\n", i);
                 break;
+            default:
+                fprintf(stderr, "unknown kind of instruction.\n");
+                exit(1);
         }
     }
 }
