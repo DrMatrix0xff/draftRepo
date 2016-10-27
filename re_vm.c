@@ -40,9 +40,9 @@ struct program {
 static struct {
     struct instruct *inst;
     int p;
-} stack[512];
+} stack[512], array[1000];
 
-static int sp = 0;
+static int sp = 0, ap = 0;
 
 /*
  * This is a backtrack style virtual machine,
@@ -50,16 +50,26 @@ static int sp = 0;
  * of the program
  */
 
+static int search_array(struct instruct *ip, int cp) {
+    int i;
+    for (i = 0; i < ap; i++) {
+        if (array[i].inst == ip && array[i].p == cp)
+            break;
+    }
+    return i;
+}
+
 int execute(struct program *prog, const char s[]) {
-    struct instruct *pc, *ppcc; /* program counter, ppcc and pp for not add duplicate record to the stack*/
-    int p, pp; /* p: string pointer */
+    struct instruct *pc; /* program counter, ppcc and pp for not add duplicate record to the stack*/
+    int p; /* p: string pointer */
+    int i;
     stack[sp].inst = prog->entry;
     stack[sp].p = 0;
     sp += 1;
     while (sp >= 1) {
         sp -= 1;
-        ppcc = pc = stack[sp].inst;
-        pp = p = stack[sp].p;
+        pc = stack[sp].inst;
+        p = stack[sp].p;
         for ( ; ; ) {
             switch (pc->op) {
                 case Char:
@@ -75,10 +85,11 @@ int execute(struct program *prog, const char s[]) {
                         fprintf(stderr, "stack overflow\n");
                         exit(1);
                     }
-                    if (p != pp || ppcc != pc->y) {
-                        stack[sp].inst = pc->y;
-                        stack[sp].p = p;
+                    if ((i = search_array(pc->y, p)) >= ap) {
+                        array[ap].inst = stack[sp].inst = pc->y;
+                        array[ap].p = stack[sp].p = p;
                         sp += 1;
+                        ap += 1;
                     }
                     pc = pc->x;
                     continue;
@@ -87,9 +98,11 @@ int execute(struct program *prog, const char s[]) {
                     continue;
                 case Match:
                     if (s[p] != '\0')
-                        printf("leftover part:%s\n", s + p);
+                        printf("leftover part: %s\n", s + p);
                     else
                         printf("exact matched.\n");
+                    for (i = 0; i < ap; i++)
+                        fprintf(stderr, "pc: %d, p: %d\n", (int)(array[i].inst - prog->entry), array[i].p);
                     return 1;
                 default:
                     fprintf(stderr, "op code of unknown kind\n");
