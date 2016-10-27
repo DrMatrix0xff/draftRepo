@@ -43,6 +43,16 @@ static void emit(re_node *node) {
             emit(node->fc);
             emit(node->sc);
             break;
+        /*
+         * code(e1|e2) =>
+         * 
+         * Split L1, L2
+         * L1: code(e1)
+         * Jmp L3
+         * L2: code(e2)
+         * L3:
+         *
+         */
         case re_alter:
             {
                 int i = ci;
@@ -57,6 +67,15 @@ static void emit(re_node *node) {
                 code[i].x = code + ci;
             }
             break;
+        /*
+         * code(e*)
+         *
+         * L0: Split L1, L2
+         * L1: code(e)
+         * Jmp L0
+         * L2:
+         *
+         */
         case re_repeat:
             {
                 int i = ci;
@@ -103,4 +122,5 @@ void print_prog_code(struct program *p) {
         }
     }
 }
+
 
