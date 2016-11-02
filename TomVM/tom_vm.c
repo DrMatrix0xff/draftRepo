@@ -8,17 +8,27 @@ typedef struct {
     int *entry_offset;
 } *List;
 
+/*
+ * clist: whose elements are starting pc for current text pointer;
+ * nlist: whose elements are starting pc for next text pointer;
+ */
+
 List clist, nlist;
 
 static void init_list(int len) {
+    int i;
 
     clist = (List) malloc(sizeof (*clist) + len * sizeof (int));
     clist->n = 0;
     clist->entry_offset = (int *)(clist + 1);
+    for (i = 0; i < len; i++)
+        clist->entry_offset[i] = -1;
 
     nlist = (List) malloc(sizeof (*nlist) + len * sizeof (int));
     nlist->n = 0;
     nlist->entry_offset = (int *)(nlist + 1);
+    for (i = 0; i < len; i++)
+        nlist->entry_offset[i] = -1;
 
 }
 
@@ -43,6 +53,8 @@ int execute(struct program *prog, const char s[]) {
     add_to_list(clist, pc);
 
     for (p = 0; s[p]; p += 1) {
+        if (clist->n >= 2)
+            fprintf(stderr, "%d start points at text pointer: %d\n", clist->n, p);
         for (i = 0; i < clist->n; i += 1) {
             pc = prog->entry + clist->entry_offset[i];
             switch (pc->op) {
@@ -57,6 +69,7 @@ int execute(struct program *prog, const char s[]) {
                     add_to_list(clist, pc->x);
                     break;
                 case Match:
+                    fprintf(stdout, "leftover characters: %s\n", s+p);
                     return 1;
                 case Split:
                     add_to_list(clist, pc->x);
@@ -72,6 +85,8 @@ int execute(struct program *prog, const char s[]) {
             l = clist; clist = nlist; nlist = l;
         }
         nlist->n = 0;
+        for (i = 0; i < prog->len; i++)
+            nlist->entry_offset[i] = -1;
     }
     return 0;
 }

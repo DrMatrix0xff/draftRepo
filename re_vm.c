@@ -60,8 +60,8 @@ static int search_array(struct instruct *ip, int cp) {
 }
 
 int execute(struct program *prog, const char s[]) {
-    struct instruct *pc; /* program counter, ppcc and pp for not add duplicate record to the stack*/
-    int p; /* p: string pointer */
+    struct instruct *pc; /* program counter */
+    int p; /* p: text cursor of s */
     int i;
     stack[sp].inst = prog->entry;
     stack[sp].p = 0;
