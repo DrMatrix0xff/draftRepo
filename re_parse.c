@@ -5,11 +5,17 @@
 
 #include "diyre.h"
 
+static re_node *parse_re_exp_helper(const char s[], int *step, int sub);
 static re_node *parse_re_term(const char **ss);
 static re_node *parse_re_factor(const char **ss);
 static re_node *parse_re_atom(const char **ss);
 
-re_node *parse_re_exp(const char s[], int *step, int sub) {
+re_node *parse_re_exp(const char s[]) {
+    int i__;
+    return parse_re_exp_helper(s, &i__, 0);
+}
+
+static re_node *parse_re_exp_helper(const char s[], int *step, int sub) {
     re_node *p, *pp;
     const char *ss = s;
     p = parse_re_term(&ss);
@@ -56,6 +62,11 @@ static re_node *parse_re_factor(const char **ss) {
     if (**ss == '*') {
         *ss = *ss + 1;
         p = make_repeat_node(p);
+    } else {
+        if (**ss == '?') {
+            *ss = *ss + 1;
+            p = make_optional_node(p);
+        }
     }
     return p;
 }
@@ -76,7 +87,7 @@ static re_node *parse_re_atom(const char **ss) {
     } else if (c == '\50') {
         *ss = *ss + 1;
         sub = 1;
-        p = parse_re_exp(*ss, &step, sub);
+        p = parse_re_exp_helper(*ss, &step, sub);
         *ss = *ss + step;
         if (**ss == '\51')
             *ss = *ss + 1;
@@ -118,6 +129,11 @@ void print_re_node(re_node *root, int level) {
             break;
         case re_repeat:
             fprintf(stdout, "%s(repeat\n", indent);
+            print_re_node(root->fc, level+1);
+            fprintf(stdout, "%s)\n", indent);
+            break;
+        case re_optional:
+            fprintf(stdout, "%s(option\n", indent);
             print_re_node(root->fc, level+1);
             fprintf(stdout, "%s)\n", indent);
             break;

@@ -5,7 +5,7 @@ regex = reterm.
 reterm = refactor reterm
 reterm = refactor
 
-refactor = reatom['*']
+refactor = reatom['*'|'?']
 
 reatom = letter | '.' | '(' regex ')'
 
@@ -16,6 +16,7 @@ a.b* => (concat (concat (char a) dot) (repeat (char b)))
 
 ab*|cc* => (alternative (concat (char a) (repeat (char b))) (concat (char c) (repeat (char c))))
 */
+
 #ifndef DIY_RE_H
 #define DIY_RE_H
 
@@ -43,6 +44,7 @@ typedef enum {
     re_char=1,
     re_concat,
     re_repeat,
+    re_optional,
     re_alter,
     re_dot
 } re_kind;
@@ -56,7 +58,7 @@ struct node__ {
 
 typedef struct node__ re_node;
 
-extern re_node *parse_re_exp(const char s[], int *step, int sub);
+extern re_node *parse_re_exp(const char s[]);
 extern void print_re_node(re_node *root, int level);
 extern struct program *compile(re_node *node);
 extern void print_prog_code(struct program *p);
@@ -66,6 +68,7 @@ extern re_node *make_alter_node(re_node *sub1, re_node *sub2);
 extern re_node *make_concat_node(re_node *sub1, re_node *sub2);
 extern re_node *make_char_node(char c);
 extern re_node *make_repeat_node(re_node *sub1);
+extern re_node *make_optional_node(re_node *sub1);
 extern re_node *make_dot_node(void);
 
 #endif

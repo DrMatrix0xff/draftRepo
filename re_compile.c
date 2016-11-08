@@ -89,6 +89,16 @@ static void emit(re_node *node) {
                 code[i].y = code + ci;
             }
             break;
+        case re_optional:
+            {
+                int i = ci;
+                code[ci].op = Split;
+                code[ci].x = code + (ci + 1);
+                ci += 1;
+                emit(node->fc);
+                code[i].y = code + ci;
+            }
+            break;
         default:
             fprintf(stderr, "do not know how to emit\n");
             exit(1);

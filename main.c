@@ -4,14 +4,13 @@
 #include "diyre.h"
 
 int main(int argc, char *argv[]) {
-    const char *patt = "(((a*)*)*)*c.";
+    const char *patt = "(aa*)?c.";
     const char *str = "aaacdxyz";
     // const char *str = "cd";
     // const char *patt = "ab*(c|C(a(b)))|d*e";
     re_node *rt;
-    int ii;
     struct program *prog;
-    rt = parse_re_exp(patt, &ii, 0);
+    rt = parse_re_exp(patt);
     print_re_node(rt, 1);
 
     prog = compile(rt);
