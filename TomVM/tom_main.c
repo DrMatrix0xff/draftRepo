@@ -4,7 +4,7 @@
 #include "../diyre.h"
 
 int main(int argc, char *argv[]) {
-    const char *patt = "(aa*)?ac.";
+    const char *patt = "(ab*)+ac.";
     const char *str = "aaaaacdxyz";
     // const char *str = "cd";
     // const char *patt = "ab*(c|C(a(b)))|d*e";

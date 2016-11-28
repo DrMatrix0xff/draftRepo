@@ -62,12 +62,14 @@ static re_node *parse_re_factor(const char **ss) {
     if (**ss == '*') {
         *ss = *ss + 1;
         p = make_repeat_node(p);
-    } else {
-        if (**ss == '?') {
-            *ss = *ss + 1;
-            p = make_optional_node(p);
-        }
+    } else if (**ss == '?') {
+        *ss = *ss + 1;
+        p = make_optional_node(p);
+    } else if (**ss == '+') {
+        *ss = *ss + 1;
+        p = make_plus_node(p);
     }
+
     return p;
 }
 
@@ -132,6 +134,11 @@ void print_re_node(re_node *root, int level) {
             print_re_node(root->fc, level+1);
             fprintf(stdout, "%s)\n", indent);
             break;
+        case re_plus:
+            fprintf(stdout, "%s(plus\n", indent);
+            print_re_node(root->fc, level+1);
+            fprintf(stdout, "%s)\n", indent);
+            break;
         case re_optional:
             fprintf(stdout, "%s(option\n", indent);
             print_re_node(root->fc, level+1);
@@ -149,4 +156,5 @@ void print_re_node(re_node *root, int level) {
     }
     free(indent);
 }
+
 

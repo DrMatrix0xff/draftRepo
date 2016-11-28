@@ -54,6 +54,16 @@ re_node *make_repeat_node(re_node *sub) {
     return p;
 }
 
+re_node *make_plus_node(re_node *sub) {
+    re_node *p;
+    p = (re_node *) calloc(1, sizeof(re_node));
+    if (p != NULL) {
+        p->kind = re_plus;
+        p->fc = sub;
+    }
+    return p;
+}
+
 re_node *make_optional_node(re_node *sub) {
     re_node *p;
     p = (re_node *) calloc(1, sizeof(re_node));

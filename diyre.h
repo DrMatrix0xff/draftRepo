@@ -45,6 +45,7 @@ typedef enum {
     re_concat,
     re_repeat,
     re_optional,
+    re_plus,
     re_alter,
     re_dot
 } re_kind;
@@ -68,6 +69,7 @@ extern re_node *make_alter_node(re_node *sub1, re_node *sub2);
 extern re_node *make_concat_node(re_node *sub1, re_node *sub2);
 extern re_node *make_char_node(char c);
 extern re_node *make_repeat_node(re_node *sub1);
+extern re_node *make_plus_node(re_node *sub1);
 extern re_node *make_optional_node(re_node *sub1);
 extern re_node *make_dot_node(void);
 

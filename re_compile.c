@@ -89,6 +89,14 @@ static void emit(re_node *node) {
                 code[i].y = code + ci;
             }
             break;
+        /*
+         * code(e?)
+         *
+         * L0: Split L1, L2
+         * L1: code(e)
+         * L2:
+         *
+         */
         case re_optional:
             {
                 int i = ci;
@@ -97,6 +105,24 @@ static void emit(re_node *node) {
                 ci += 1;
                 emit(node->fc);
                 code[i].y = code + ci;
+            }
+            break;
+        /*
+         * code(e+)
+         *
+         * L0: code(e)
+         * L1: Split L0, L2
+         * L2:
+         *
+         */
+        case re_plus:
+            {
+                int i = ci;
+                emit(node->fc);
+                code[ci].op = Split;
+                code[ci].x = code + i;
+                code[ci].y = code + (ci + 1);
+                ci += 1;
             }
             break;
         default:
